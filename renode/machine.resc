@@ -1,0 +1,12 @@
+using sysbus;
+
+mach create;
+
+machine LoadPlatformDescription @platforms/boards/arduino_nano_33_ble.repl
+showAnalyzer sysbus.uart0
+
+macro reset
+"""
+    sysbus LoadELF @../build/zephyr/zephyr.elf
+"""
+runMacro $reset
