@@ -7,6 +7,6 @@ showAnalyzer sysbus.uart0
 
 macro reset
 """
-    sysbus LoadELF @../build/zephyr/zephyr.elf
+    sysbus LoadELF $ORIGIN/../build/zephyr/zephyr.elf
 """
 runMacro $reset
