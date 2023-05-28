@@ -1,12 +1,16 @@
 &uart0 {
      compatible = "nordic,nrf-uarte";
 };
-&i2c0 {
-  status = "okay"; 
-  lsm9ds1_imu: lsm9ds0@6b {
-    compatible = "st,lsm9ds0-gyro";
+arduino_i2c0: &i2c1 {
+	compatible = "nordic,nrf-twi";
+	status = "okay";
+	pinctrl-0 = <&i2c1_default>;
+	pinctrl-1 = <&i2c1_sleep>;
+	pinctrl-names = "default", "sleep";
+  lsm9ds0_imu: lsm6ds0@6b {
+    compatible = "st,lsm6ds0";
     reg = < 0x6b >;
-    label = "LSM9DS0";
+    label = "TWOJA_STARA";
     status = "okay";
   };
 };
