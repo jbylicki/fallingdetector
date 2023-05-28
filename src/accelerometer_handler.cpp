@@ -24,7 +24,7 @@
 
 #define BUFLEN 300
 int begin_index = 0;
-const struct device *const sensor = DEVICE_DT_GET_ONE(st_lsm9ds0_gyro);
+const struct device *const sensor = DEVICE_DT_GET_ONE(st_lsm6ds0);
 int current_index = 0;
 
 float bufx[BUFLEN] = { 0.0f };
