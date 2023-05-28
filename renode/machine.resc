@@ -8,5 +8,6 @@ showAnalyzer sysbus.uart0
 macro reset
 """
     sysbus LoadELF $ORIGIN/../build/zephyr/zephyr.elf
+    twi1.lsm9ds1_imu FeedAccelerationSample $ORIGIN/circle.data
 """
 runMacro $reset
