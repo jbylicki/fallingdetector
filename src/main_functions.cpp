@@ -28,6 +28,7 @@
 #include <zephyr/kernel.h>
 
 /* Globals, used for compatibility with Arduino-style sketches. */
+int timerCycleCount = 0;
 namespace {
 	tflite::ErrorReporter *error_reporter = nullptr;
 	const tflite::Model *model = nullptr;
@@ -52,6 +53,7 @@ K_WORK_DEFINE(my_work, worker);
 
 void my_timer_handler(struct k_timer *dummy)
 {
+  timerCycleCount++;
   k_work_submit(&my_work);
 }
 
@@ -124,19 +126,20 @@ void setup(void)
 
 void loop(void)
 {
-  return;
 	/* Attempt to read new data from the accelerometer. */
 	/* Run inference, and report any error */
-	TfLiteStatus invoke_status = interpreter->Invoke();
-	if (invoke_status != kTfLiteOk) {
-		TF_LITE_REPORT_ERROR(error_reporter, "Invoke failed on index: %d\n",
-				     begin_index);
-		return;
-	}
-	/* Analyze the results to obtain a prediction */
-	int gesture_index = PredictGesture(interpreter->output(0)->data.f);
+  if(timerCycleCount%10 == 0){
+    TfLiteStatus invoke_status = interpreter->Invoke();
+    if (invoke_status != kTfLiteOk) {
+      TF_LITE_REPORT_ERROR(error_reporter, "Invoke failed on index: %d\n",
+               begin_index);
+      return;
+    }
+    /* Analyze the results to obtain a prediction */
+    int gesture_index = PredictGesture(interpreter->output(0)->data.f);
 
-	// /* Produce an output */
-	HandleOutput(error_reporter, gesture_index);
+    // /* Produce an output */
+    HandleOutput(error_reporter, gesture_index);
+  }
   return;
 }
