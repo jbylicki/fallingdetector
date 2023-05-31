@@ -25,6 +25,7 @@
 #include <tensorflow/lite/micro/micro_interpreter.h>
 #include <tensorflow/lite/micro/micro_mutable_op_resolver.h>
 #include <tensorflow/lite/schema/schema_generated.h>
+#include <zephyr/kernel.h>
 
 /* Globals, used for compatibility with Arduino-style sketches. */
 namespace {
@@ -41,6 +42,21 @@ namespace {
 	constexpr int kTensorArenaSize = 60 * 1024;
 	uint8_t tensor_arena[kTensorArenaSize];
 } /* namespace */
+
+void worker(struct k_work *work)
+{
+	ReadAccelerometer(error_reporter, model_input->data.f, input_length);
+}
+
+K_WORK_DEFINE(my_work, worker);
+
+void my_timer_handler(struct k_timer *dummy)
+{
+  k_work_submit(&my_work);
+}
+
+K_TIMER_DEFINE(my_timer, my_timer_handler, NULL);
+
 
 /* The name of this function is important for Arduino compatibility. */
 void setup(void)
@@ -102,19 +118,14 @@ void setup(void)
 	if (setup_status != kTfLiteOk) {
 		TF_LITE_REPORT_ERROR(error_reporter, "Set up failed\n");
 	}
+  k_timer_start(&my_timer, K_MSEC(100), K_MSEC(100));
 }
+
 
 void loop(void)
 {
+  return;
 	/* Attempt to read new data from the accelerometer. */
-	bool got_data =
-		ReadAccelerometer(error_reporter, model_input->data.f, input_length);
-
-	/* If there was no new data, wait until next time. */
-	if (!got_data) {
-		return;
-	}
-
 	/* Run inference, and report any error */
 	TfLiteStatus invoke_status = interpreter->Invoke();
 	if (invoke_status != kTfLiteOk) {
@@ -126,6 +137,6 @@ void loop(void)
 	int gesture_index = PredictGesture(interpreter->output(0)->data.f);
 
 	// /* Produce an output */
-	// HandleOutput(error_reporter, gesture_index);
+	HandleOutput(error_reporter, gesture_index);
   return;
 }

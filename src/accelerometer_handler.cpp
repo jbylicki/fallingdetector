@@ -59,11 +59,6 @@ bool ReadAccelerometer(tflite::ErrorReporter *error_reporter, float *input,
 	int samples_count;
 
 	rc = sensor_sample_fetch(sensor);
-	if (rc < 0) {
-		TF_LITE_REPORT_ERROR(error_reporter, "Fetch failed\n");
-		return false;
-	}
-
 	samples_count = 1;
 	for (int i = 0; i < samples_count; i++) {
 		rc = sensor_channel_get(sensor, SENSOR_CHAN_ACCEL_XYZ, accel);
@@ -71,9 +66,9 @@ bool ReadAccelerometer(tflite::ErrorReporter *error_reporter, float *input,
 			TF_LITE_REPORT_ERROR(error_reporter, "ERROR: Update failed: %d\n", rc);
 			return false;
 		}
-		bufx[begin_index] = (float)sensor_value_to_double(&accel[0])*100;
-		bufy[begin_index] = (float)sensor_value_to_double(&accel[1])*100;
-		bufz[begin_index] = (float)sensor_value_to_double(&accel[2])*100;
+		bufx[begin_index] = (float)sensor_value_to_double(&accel[0]);
+		bufy[begin_index] = (float)sensor_value_to_double(&accel[1]);
+		bufz[begin_index] = (float)sensor_value_to_double(&accel[2]);
     printf("%f %f %f\n", bufx[begin_index], bufy[begin_index], bufz[begin_index]);
 		begin_index++;
 		if (begin_index >= BUFLEN) {
