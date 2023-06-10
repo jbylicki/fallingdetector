@@ -36,10 +36,9 @@ import random
 
 LABEL_NAME = "gesture"
 DATA_NAME = "accel_ms2_xyz"
-folders = ["wing", "ring", "slope"]
+folders = ["wing"]
 names = [
-        "hyw", "shiyun", "tangsy", "dengyl", "zhangxy", "pengxl", "liucx",
-        "jiangyh", "xunkai"
+        "bylu"
 ]
 
 
@@ -154,7 +153,7 @@ if __name__ == "__main__":
         for idx2, name in enumerate(names):
             prepare_original_data(folder, name, data,
                                                         "./%s/output_%s_%s.txt" % (folder, folder, name))
-    for idx in range(5):
+    for idx in range(1):
         prepare_original_data("negative", "negative%d" % (idx + 1), data,
                                                     "./negative/output_negative_%d.txt" % (idx + 1))
     generate_negative_data(data)

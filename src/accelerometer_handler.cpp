@@ -45,7 +45,7 @@ TfLiteStatus SetupAccelerometer(tflite::ErrorReporter *error_reporter)
 				     "Failed to get accelerometer, name: %s\n",
 				     sensor->name);
 	} else {
-		TF_LITE_REPORT_ERROR(error_reporter, "Got accelerometer, name: %s\n",
+		TF_LITE_REPORT_ERROR(error_reporter, "-,-,-\r\n",
 				     sensor->name);
 	}
 	return kTfLiteOk;
@@ -69,7 +69,7 @@ bool ReadAccelerometer(tflite::ErrorReporter *error_reporter, float *input,
 		bufx[begin_index] = (float)sensor_value_to_double(&accel[0]);
 		bufy[begin_index] = (float)sensor_value_to_double(&accel[1]);
 		bufz[begin_index] = (float)sensor_value_to_double(&accel[2]);
-    printf("%f %f %f\n", bufx[begin_index], bufy[begin_index], bufz[begin_index]);
+    // printf("%1f,%1f,%1f\r\n", bufx[begin_index], bufy[begin_index], bufz[begin_index]);
 		begin_index++;
 		if (begin_index >= BUFLEN) {
 			begin_index = 0;
