@@ -18,16 +18,13 @@
 
 #include "accelerometer_handler.hpp"
 #include "constants.hpp"
-#include "gesture_predictor.hpp"
 #include "magic_wand_model_data.hpp"
-#include "output_handler.hpp"
 #include <tensorflow/lite/micro/micro_error_reporter.h>
 #include <tensorflow/lite/micro/micro_interpreter.h>
 #include <tensorflow/lite/micro/micro_mutable_op_resolver.h>
 #include <tensorflow/lite/schema/schema_generated.h>
 #include <zephyr/kernel.h>
 
-/* Globals, used for compatibility with Arduino-style sketches. */
 int timerCycleCount = 0;
 namespace {
 	tflite::ErrorReporter *error_reporter = nullptr;
@@ -35,11 +32,6 @@ namespace {
 	tflite::MicroInterpreter *interpreter = nullptr;
 	TfLiteTensor *model_input = nullptr;
 	int input_length;
-
-	/* Create an area of memory to use for input, output, and intermediate arrays.
-	* The size of this will depend on the model you're using, and may need to be
-	* determined by experimentation.
-	*/
 	constexpr int kTensorArenaSize = 60 * 1024;
 	uint8_t tensor_arena[kTensorArenaSize];
 } /* namespace */
@@ -59,21 +51,13 @@ void my_timer_handler(struct k_timer *dummy)
 
 K_TIMER_DEFINE(my_timer, my_timer_handler, NULL);
 
-
-/* The name of this function is important for Arduino compatibility. */
 void setup(void)
 {
-	/* Set up logging. Google style is to avoid globals or statics because of
-	 * lifetime uncertainty, but since this has a trivial destructor it's okay.
-	 */
 	static tflite::MicroErrorReporter micro_error_reporter; /* NOLINT */
 
 	error_reporter = &micro_error_reporter;
 
-	/* Map the model into a usable data structure. This doesn't involve any
-	 * copying or parsing, it's a very lightweight operation.
-	 */
-	model = tflite::GetModel(g_magic_wand_model_data);
+	model = tflite::GetModel(train_model_tflite);
 	if (model->version() != TFLITE_SCHEMA_VERSION) {
 		TF_LITE_REPORT_ERROR(error_reporter,
 				     "Model provided is schema version %d not equal "
@@ -82,12 +66,6 @@ void setup(void)
 		return;
 	}
 
-	/* Pull in only the operation implementations we need.
-	 * This relies on a complete list of all the ops needed by this graph.
-	 * An easier approach is to just use the AllOpsResolver, but this will
-	 * incur some penalty in code space for op implementations that are not
-	 * needed by this graph.
-	 */
 	static tflite::MicroMutableOpResolver < 6 > micro_op_resolver; /* NOLINT */
 	micro_op_resolver.AddConv2D();
 	micro_op_resolver.AddDepthwiseConv2D();
@@ -110,8 +88,10 @@ void setup(void)
 	    (model_input->dims->data[1] != 128) ||
 	    (model_input->dims->data[2] != kChannelNumber) ||
 	    (model_input->type != kTfLiteFloat32)) {
+    while(1)
 		TF_LITE_REPORT_ERROR(error_reporter,
 				     "Bad input tensor parameters in model");
+
 		return;
 	}
 
@@ -121,7 +101,7 @@ void setup(void)
 	if (setup_status != kTfLiteOk) {
 		TF_LITE_REPORT_ERROR(error_reporter, "Set up failed\n");
 	}
-  k_timer_start(&my_timer, K_MSEC(50), K_MSEC(50));
+  k_timer_start(&my_timer, K_MSEC(40), K_MSEC(40));
 }
 
 
@@ -138,15 +118,14 @@ void loop(void)
     }
     int gesture_index=3;
     float max_pred = -1;
-    for (int i=0; i<4; i++) {
+    for (int i=0; i<2; i++) {
       if (interpreter->output(0)->data.f[i] > max_pred) {
         max_pred = interpreter->output(0)->data.f[i];
         gesture_index = i;
       }
     }
 
-    // /* Produce an output */
-    printf("gesture_index: %d @ %f\n", gesture_index, max_pred);
+    // printf("gesture_index: %d @ %f\n", gesture_index, max_pred);
   }
   return;
 }

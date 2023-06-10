@@ -53,7 +53,7 @@ def split_data(data, train_ratio, valid_ratio):
     train_data = []
     valid_data = []
     test_data = []
-    num_dic = {"wing": 0, "ring": 0, "slope": 0, "negative": 0}
+    num_dic = {"wing": 0, "negative": 0}
     for idx, item in enumerate(data):    # pylint: disable=unused-variable
         for i in num_dic:
             if item["gesture"] == i:

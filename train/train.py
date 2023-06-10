@@ -70,7 +70,6 @@ def build_cnn(seq_length):
     print("Built CNN.")
     if not os.path.exists(model_path):
         os.makedirs(model_path)
-    model.load_weights("./netmodels/CNN/weights.h5")
     return model, model_path
 
 
@@ -119,7 +118,7 @@ def train_net(
         kind):
     """Trains the model."""
     calculate_model_size(model)
-    epochs = 5
+    epochs = 15
     batch_size = 64
     model.compile(
             optimizer="adam",
