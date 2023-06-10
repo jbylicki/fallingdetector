@@ -88,12 +88,13 @@ void setup(void)
 	 * incur some penalty in code space for op implementations that are not
 	 * needed by this graph.
 	 */
-	static tflite::MicroMutableOpResolver < 5 > micro_op_resolver; /* NOLINT */
+	static tflite::MicroMutableOpResolver < 6 > micro_op_resolver; /* NOLINT */
 	micro_op_resolver.AddConv2D();
 	micro_op_resolver.AddDepthwiseConv2D();
 	micro_op_resolver.AddFullyConnected();
 	micro_op_resolver.AddMaxPool2D();
 	micro_op_resolver.AddSoftmax();
+  micro_op_resolver.AddReshape();
 
 	/* Build an interpreter to run the model with. */
 	static tflite::MicroInterpreter static_interpreter(
@@ -120,7 +121,7 @@ void setup(void)
 	if (setup_status != kTfLiteOk) {
 		TF_LITE_REPORT_ERROR(error_reporter, "Set up failed\n");
 	}
-  k_timer_start(&my_timer, K_MSEC(100), K_MSEC(100));
+  k_timer_start(&my_timer, K_MSEC(50), K_MSEC(50));
 }
 
 
@@ -135,11 +136,17 @@ void loop(void)
                begin_index);
       return;
     }
-    /* Analyze the results to obtain a prediction */
-    int gesture_index = PredictGesture(interpreter->output(0)->data.f);
+    int gesture_index=3;
+    float max_pred = -1;
+    for (int i=0; i<4; i++) {
+      if (interpreter->output(0)->data.f[i] > max_pred) {
+        max_pred = interpreter->output(0)->data.f[i];
+        gesture_index = i;
+      }
+    }
 
     // /* Produce an output */
-    HandleOutput(error_reporter, gesture_index);
+    printf("gesture_index: %d @ %f\n", gesture_index, max_pred);
   }
   return;
 }
