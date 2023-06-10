@@ -23,7 +23,7 @@
 #ifndef TENSORFLOW_LITE_MICRO_EXAMPLES_MAGIC_WAND_MAGIC_WAND_MODEL_DATA_H_
 #define TENSORFLOW_LITE_MICRO_EXAMPLES_MAGIC_WAND_MAGIC_WAND_MODEL_DATA_H_
 
-extern const unsigned char g_magic_wand_model_data[];
-extern const int g_magic_wand_model_data_len;
+extern const unsigned char train_model_tflite[];
+extern const unsigned int train_model_tflite_len;
 
 #endif /* TENSORFLOW_LITE_MICRO_EXAMPLES_MAGIC_WAND_MAGIC_WAND_MODEL_DATA_H_ */

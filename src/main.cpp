@@ -18,7 +18,6 @@ int main(int argc, char *argv[])
 		return 1;
 	}
   k_sleep(K_SECONDS(2));
-  // printf("Starting TensorFlow Lite Micro\n");
   k_sleep(K_SECONDS(1));
 	setup();
 	while (true) {
