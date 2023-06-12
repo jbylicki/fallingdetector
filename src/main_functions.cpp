@@ -85,7 +85,7 @@ void setup(void)
 	/* Obtain pointer to the model's input tensor. */
 	model_input = interpreter->input(0);
 	if ((model_input->dims->size != 4) || (model_input->dims->data[0] != 1) ||
-	    (model_input->dims->data[1] != 128) ||
+	    (model_input->dims->data[1] != 30) ||
 	    (model_input->dims->data[2] != kChannelNumber) ||
 	    (model_input->type != kTfLiteFloat32)) {
     while(1)
@@ -125,7 +125,7 @@ void loop(void)
       }
     }
 
-    // printf("gesture_index: %d @ %f\n", gesture_index, max_pred);
+    printf("gesture_index: %d @ %f\n", gesture_index, max_pred);
   }
   return;
 }
