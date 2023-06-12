@@ -69,7 +69,7 @@ bool ReadAccelerometer(tflite::ErrorReporter *error_reporter, float *input,
 		bufx[begin_index] = (float)sensor_value_to_double(&accel[0]);
 		bufy[begin_index] = (float)sensor_value_to_double(&accel[1]);
 		bufz[begin_index] = (float)sensor_value_to_double(&accel[2]);
-    printf("%1f,%1f,%1f\r\n", bufx[begin_index], bufy[begin_index], bufz[begin_index]);
+    // printf("%1f,%1f,%1f\r\n", bufx[begin_index], bufy[begin_index], bufz[begin_index]);
 		begin_index++;
 		if (begin_index >= BUFLEN) {
 			begin_index = 0;
