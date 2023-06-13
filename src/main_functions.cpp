@@ -15,6 +15,7 @@
  */
 
 #include "main_functions.hpp"
+#include "peripheral_gatt_write.h"
 
 #include "accelerometer_handler.hpp"
 #include "constants.hpp"
@@ -102,6 +103,9 @@ void setup(void)
 		TF_LITE_REPORT_ERROR(error_reporter, "Set up failed\n");
 	}
   k_timer_start(&my_timer, K_MSEC(40), K_MSEC(40));
+
+	printf("Preparing BLE\n");
+	peripheral_gatt_prepare_ble();
 }
 
 
@@ -125,6 +129,8 @@ void loop(void)
       }
     }
 		printf("gesture_index: %d @ %f\n", gesture_index, max_pred);
+		int pred = gesture_index ? 0 : (int)(max_pred*100.0f);
+		peripheral_gatt_send_ble(5, pred);
   }
   return;
 }
